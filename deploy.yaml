@@ -1,0 +1,22 @@
+---
+- name: "Deploy script"
+  hosts: all
+  become: true
+  become_user: root
+  tasks:
+
+  - name: Install apt packages
+    apt: name={{item}} state=installed update_cache=yes
+    with_items:
+    - "nginx"
+
+  - name: Upload build to server
+    copy: src=../html/ dest=/var/www/html/zerowidth.space/
+
+  - name: Upload server conf
+    copy: src=conf/etc/nginx/sites-enabled/zws.conf dest=/etc/nginx/sites-enabled/zws.conf
+
+  - name: Ensure that new nginx config is applied
+		service: name=nginx state=restarted
+
+
